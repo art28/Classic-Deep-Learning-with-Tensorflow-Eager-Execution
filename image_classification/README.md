@@ -2,6 +2,9 @@
 Image Classification models used in [ILSVRC](http://www.image-net.org/challenges/LSVRC/).
 
 ## Dataset
+```console
+source download_cifar.sh
+```
 - [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz) is used because [original ILSVRC data](http://www.image-net.org/download-images) is too heavy to be handled in normal computers.
 - so, most of the models' sizes are intentionally reduced.
 - but, I tried to maintain main chracateristics.
