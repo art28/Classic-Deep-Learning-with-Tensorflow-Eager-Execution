@@ -1,0 +1,13 @@
+# Image Classification
+Image Classification models used in [ILSVRC](http://www.image-net.org/challenges/LSVRC/).
+
+## Dataset
+- [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz) is used because original ILSVRC data is too heavy to be handled in normal computers.
+- so, most of the models' sizes are intentionally reduced.
+- but, I tried to maintain main chracateristics.
+
+## Categories
+ - [ ] [Alexnet](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+ - [ ] [VGGNet](https://arxiv.org/pdf/1409.1556.pdf)
+ - [ ] [GoogLenet(inception)](http://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf)
+ - [ ] [Resnet](https://arxiv.org/pdf/1512.03385.pdf)
