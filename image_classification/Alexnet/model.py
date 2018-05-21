@@ -72,6 +72,11 @@ class Alexnet(tf.keras.Model):
         self.epoch_loss = 0
 
     def predict(self, X, training):
+        """predicting output of the network
+        Args:
+            X : input tensor
+            training : whether apply dropout or not
+        """
         x = self.conv1(X)
         x = lrn(x)
         x = self.maxpool1(x)
@@ -99,17 +104,38 @@ class Alexnet(tf.keras.Model):
         return x
 
     def loss(self, X, y, training):
+        """calculate loss of the batch
+        Args:
+            X : input tensor
+            y : target label(class number)
+            training : whether apply dropout or not
+        """
         prediction = self.predict(X, training)
         loss_value = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=prediction)
         self.epoch_loss += loss_value
         return loss_value
 
     def grad(self, X, y, trainig):
+        """calculate gradient of the batch
+        Args:
+            X : input tensor
+            y : target label(class number)
+            training : whether apply dropout or not
+        """
         with tfe.GradientTape() as tape:
             loss_value = self.loss(X, y, trainig)
         return tape.gradient(loss_value, self.variables)
 
-    def fit(self, train_data, test_data, epochs=1, verbose=1, batch_size=32):
+    def fit(self, train_data, test_data=None, epochs=1, verbose=1, batch_size=32, saving=False):
+        """train the network
+        Args:
+            train_data: train dataset
+            test_data : test dataset for accuracy validation. if None, no validation
+            epochs : training epochs
+            verbose : for which step it will print the loss and accuracy (and saving)
+            batch_size : training batch size
+            saving: whether to save checkpoint or not
+        """
 
         batch_shuffle_data = train_data.shuffle(100).batch(batch_size)
 
@@ -124,8 +150,10 @@ class Alexnet(tf.keras.Model):
                 if i == 0 or ((i + 1) % verbose == 0):
                     print("[EPOCH %d / STEP %d]" % ((i + 1), self.global_step))
                     print("TRAIN loss   : %.4f" % self.epoch_loss)
-                    self.save()
-                    self.test(test_data)
+                    if saving:
+                        self.save()
+                    if test_data:
+                        self.test(test_data)
                     print("=" * 25)
 
     def test(self, test_data):
@@ -139,7 +167,7 @@ class Alexnet(tf.keras.Model):
                 predictions = tf.argmax(logits, axis=1)
                 accuracy(predictions, y)
 
-            print("TEST ACCURACY: %.4f%%" % (100.0 * accuracy.result().numpy()))
+            print("TEST accuracy: %.4f%%" % (100.0 * accuracy.result().numpy()))
 
             accuracy.init_variables()
 
