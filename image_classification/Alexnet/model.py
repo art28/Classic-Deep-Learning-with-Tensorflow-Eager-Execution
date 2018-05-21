@@ -122,10 +122,11 @@ class Alexnet(tf.keras.Model):
 
                 self.global_step += 1
                 if i == 0 or ((i + 1) % verbose == 0):
-                    print("[EPOCH %d]" % (i + 1))
-                    print("[STEP %d] loss: %4f" % (self.global_step, self.epoch_loss))
+                    print("[EPOCH %d / STEP %d]" % ((i + 1), self.global_step))
+                    print("TRAIN loss   : %.4f" % self.epoch_loss)
                     self.save()
                     self.test(test_data)
+                    print("=" * 25)
 
     def test(self, test_data):
         with tf.device(self.device_name):
@@ -138,8 +139,7 @@ class Alexnet(tf.keras.Model):
                 predictions = tf.argmax(logits, axis=1)
                 accuracy(predictions, y)
 
-            print("TEST ACCURACY: %f" % accuracy.result().numpy())
-            print("TEST LOSS    : %f" % total_loss)
+            print("TEST ACCURACY: %.4f%%" % (100.0 * accuracy.result().numpy()))
 
             accuracy.init_variables()
 
