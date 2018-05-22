@@ -3,9 +3,6 @@ import tensorflow.contrib.eager as tfe
 import numpy as np
 import time
 
-# eagerly
-tfe.enable_eager_execution(device_policy=tfe.DEVICE_PLACEMENT_SILENT)
-
 
 def lrn(x, radius=2, alpha=1e-04, beta=0.75, bias=1.0):
     """Create a local response normalization layer.
@@ -46,11 +43,11 @@ class Alexnet(tf.keras.Model):
                                       activation=tf.nn.relu)
         self.maxpool1 = tf.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2))
         self.conv2 = tf.layers.Conv2D(48, (5, 5), (1, 1), padding="same", activation=tf.nn.relu)
-        self.maxpool2 = tf.layers.MaxPooling2D((3, 3), (2, 2))
+        self.maxpool2 = tf.layers.MaxPooling2D((3, 3), (2, 2), padding="same")
         self.conv3 = tf.layers.Conv2D(72, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv4 = tf.layers.Conv2D(72, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv5 = tf.layers.Conv2D(48, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
-        self.maxpool5 = tf.layers.MaxPooling2D((3, 3), (2, 2))
+        self.maxpool5 = tf.layers.MaxPooling2D((3, 3), (2, 2), padding="same")
 
         self.flatten = tf.layers.Flatten()
 

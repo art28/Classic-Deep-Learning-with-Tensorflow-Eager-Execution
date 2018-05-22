@@ -3,6 +3,10 @@ from preprocess import prerprocess_train, prerprocess_test
 import tensorflow.contrib.eager as tfe
 
 
+# eagerly (declared only once)
+tfe.enable_eager_execution(device_policy=tfe.DEVICE_PLACEMENT_SILENT)
+
+
 def main():
     dir_name = "../data/"
     data_train = prerprocess_train(dir_name)

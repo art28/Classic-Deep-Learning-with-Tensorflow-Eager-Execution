@@ -3,9 +3,6 @@ import tensorflow.contrib.eager as tfe
 import numpy as np
 import time
 
-# eagerly
-tfe.enable_eager_execution(device_policy=tfe.DEVICE_PLACEMENT_SILENT)
-
 
 class VGGnet(tf.keras.Model):
     """ VGGnet model for CIFAR-10 dataset.
@@ -37,11 +34,11 @@ class VGGnet(tf.keras.Model):
                                       activation=tf.nn.relu)
         self.conv1b = tf.layers.Conv2D(filters=8, kernel_size=(3, 3), strides=(1, 1), padding="same",
                                       activation=tf.nn.relu)
-        self.maxpool1 = tf.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2))
+        self.maxpool1 = tf.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding="same")
 
         self.conv2a = tf.layers.Conv2D(16, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv2b = tf.layers.Conv2D(16, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
-        self.maxpool2 = tf.layers.MaxPooling2D((3, 3), (2, 2))
+        self.maxpool2 = tf.layers.MaxPooling2D((3, 3), (2, 2), padding="same")
 
         self.conv3a = tf.layers.Conv2D(32, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv3b = tf.layers.Conv2D(32, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
@@ -51,14 +48,12 @@ class VGGnet(tf.keras.Model):
         self.conv4a = tf.layers.Conv2D(64, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv4b = tf.layers.Conv2D(64, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
         self.conv4c = tf.layers.Conv2D(64, (1, 1), (1, 1), padding="same", activation=tf.nn.relu)
-        # not enough dimension to reduce
-        # self.maxpool4 = tf.layers.MaxPooling2D((3, 3), (2, 2))
+        self.maxpool4 = tf.layers.MaxPooling2D((3, 3), (2, 2), padding="same")
 
-        self.conv5a = tf.layers.Conv2D(64, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
-        self.conv5b = tf.layers.Conv2D(64, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
-        self.conv5c = tf.layers.Conv2D(64, (1, 1), (1, 1), padding="same", activation=tf.nn.relu)
-        # not enough dimension to reduce
-        # self.maxpool5 = tf.layers.MaxPooling2D((3, 3), (2, 2))
+        self.conv5a = tf.layers.Conv2D(128, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
+        self.conv5b = tf.layers.Conv2D(128, (3, 3), (1, 1), padding="same", activation=tf.nn.relu)
+        self.conv5c = tf.layers.Conv2D(128, (1, 1), (1, 1), padding="same", activation=tf.nn.relu)
+        self.maxpool5 = tf.layers.MaxPooling2D((2, 2), (2, 2))
 
         self.flatten = tf.layers.Flatten()
 
@@ -101,12 +96,12 @@ class VGGnet(tf.keras.Model):
         x = self.conv4a(x)
         x = self.conv4b(x)
         x = self.conv4c(x)
-        # x = self.maxpool4(x)
+        x = self.maxpool4(x)
 
         x = self.conv5a(x)
         x = self.conv5b(x)
         x = self.conv5c(x)
-        # x = self.maxpool5(x)
+        x = self.maxpool5(x)
 
         x = self.flatten(x)
         x = self.dense1(x)
