@@ -10,7 +10,7 @@ def main():
 
     device = 'gpu:0' if tfe.num_gpus() > 0 else 'cpu:0'
     lenet_model = GoogLEnet(device_name=device)
-    # alex_model.load()  # you can load the latest model you saved
+    # lenet_model.load()  # you can load the latest model you saved
     lenet_model.fit(data_train, data_test, epochs=100, verbose=10, batch_size=32)
 
 
