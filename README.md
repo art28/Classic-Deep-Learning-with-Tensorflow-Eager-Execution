@@ -11,10 +11,9 @@ Classical deep learning paper implementation using tensorflow's eager execution
  -  [floodsung](https://github.com/floodsung)/**[Deep-Learning-Papers-Reading-Roadmap](https://github.com/floodsung/Deep-Learning-Papers-Reading-Roadmap)**
 
 ## Categories
- - [ ] Image Classification
+ - [x] Image Classification
  - [ ] Speech Recognition
  - [ ] Reinforcement Learning
  - [ ] Seq2Seq
  - [ ] Generative Models
  - [ ] Neural Turing Machine
-

@@ -10,4 +10,4 @@ Image Classification models used in [ILSVRC](http://www.image-net.org/challenges
  - [x] [Alexnet](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
  - [x] [VGGNet](https://arxiv.org/pdf/1409.1556.pdf)
  - [x] [GoogLenet(inception)](http://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf)
- - [ ] [Resnet](https://arxiv.org/pdf/1512.03385.pdf)
+ - [x] [Resnet](https://arxiv.org/pdf/1512.03385.pdf)
