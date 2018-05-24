@@ -12,9 +12,9 @@ def main():
     data_test = prerprocess_test(dir_name)  # to test at once
 
     device = 'gpu:0' if tfe.num_gpus() > 0 else 'cpu:0'
-    alex_model = VGGnet(device_name=device)
+    vgg_model = VGGnet(device_name=device)
     # alex_model.load()  # you can load the latest model you saved
-    alex_model.fit(data_train, data_test, epochs=200, verbose=10, batch_size=32)
+    vgg_model.fit(data_train, data_test, epochs=200, verbose=10, batch_size=32)
 
 
 if __name__ == "__main__":

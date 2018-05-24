@@ -4,10 +4,9 @@ from glob import glob
 
 import tensorflow as tf
 
-
 def load_batches(file_name):
-    with open(file_name) as f:
-        dictionary = pickle.load(f)
+    with open(file_name, 'rb') as f:
+        dictionary = pickle.load(f, encoding='latin1')
     return dictionary
 
 
