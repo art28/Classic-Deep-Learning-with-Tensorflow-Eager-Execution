@@ -5,7 +5,7 @@ Classical deep learning paper implementation using tensorflow's eager execution
 - Tensorflow with version 1.8.0
 - CUDA 9.0 & CUDNN 7.1
 
-## Invoked by...
+## Inspired by...
 
  -  [madalinabuzau](https://github.com/madalinabuzau)/**[tensorflow-eager-tutorials](https://github.com/madalinabuzau/tensorflow-eager-tutorials)**
  -  [floodsung](https://github.com/floodsung)/**[Deep-Learning-Papers-Reading-Roadmap](https://github.com/floodsung/Deep-Learning-Papers-Reading-Roadmap)**
