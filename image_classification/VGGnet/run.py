@@ -14,7 +14,7 @@ def main():
     device = 'gpu:0' if tfe.num_gpus() > 0 else 'cpu:0'
     vgg_model = VGGnet(device_name=device)
     # vgg_model.load()  # you can load the latest model you saved
-    vgg_model.fit(data_train, data_test, epochs=200, verbose=10, batch_size=32)
+    vgg_model.fit(data_train, data_test, epochs=200, verbose=10, batch_size=32, saving=True)
 
 
 if __name__ == "__main__":
