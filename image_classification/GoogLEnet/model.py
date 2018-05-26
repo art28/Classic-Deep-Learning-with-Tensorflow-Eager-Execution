@@ -1,8 +1,7 @@
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
+import os
 from blocks import InceptionBlock
-import numpy as np
-import time
 
 
 # eagerly (declared only once)
@@ -13,7 +12,7 @@ class GoogLEnet(tf.keras.Model):
     """ GoogLEnet model for CIFAR-10 dataset.
     Args:
         input_dim: dimension of input. (32, 32, 3) for CIFAR-10.(height - width - channel)
-        out_dijm: dimension of output. 10 class for CIFAR-10
+        out_dim: dimension of output. 10 class for CIFAR-10
         learning_rate: for optimizer
         checkpoint_directory: checkpoint saving directory
         device_name: main device used for learning
@@ -30,6 +29,8 @@ class GoogLEnet(tf.keras.Model):
         self.out_dim = out_dim
         self.learning_rate = learning_rate
         self.checkpoint_directory = checkpoint_directory
+        if not os.path.exists(self.checkpoint_directory):
+            os.makedirs(self.checkpoint_directory)
         self.device_name = device_name
 
         # layer declaration
@@ -60,7 +61,7 @@ class GoogLEnet(tf.keras.Model):
         self.flatten = tf.layers.Flatten()
         self.dropout = tf.layers.Dropout(0.4)
 
-        self.out_layer = tf.layers.Dense(self.out_dim, activation=tf.nn.softmax)
+        self.out_layer = tf.layers.Dense(self.out_dim)
 
         # optimizer
         self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate)

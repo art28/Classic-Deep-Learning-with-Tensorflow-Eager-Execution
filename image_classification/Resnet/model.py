@@ -1,7 +1,6 @@
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
-import numpy as np
-import time
+import os
 from blocks import IdentitiyBlock_3, ConvolutionBlock_3
 
 
@@ -9,7 +8,7 @@ class Resnet(tf.keras.Model):
     """ Resnet model for CIFAR-10 dataset.
     Args:
         input_dim: dimension of input. (32, 32, 3) for CIFAR-10.(height - width - channel)
-        out_dijm: dimension of output. 10 class for CIFAR-10
+        out_dim: dimension of output. 10 class for CIFAR-10
         learning_rate: for optimizer
         checkpoint_directory: checkpoint saving directory
         device_name: main device used for learning
@@ -26,6 +25,8 @@ class Resnet(tf.keras.Model):
         self.out_dim = out_dim
         self.learning_rate = learning_rate
         self.checkpoint_directory = checkpoint_directory
+        if not os.path.exists(self.checkpoint_directory):
+            os.makedirs(self.checkpoint_directory)
         self.device_name = device_name
 
         # layer declaration
@@ -57,7 +58,7 @@ class Resnet(tf.keras.Model):
 
         self.flatten = tf.layers.Flatten()
 
-        self.out_layer = tf.layers.Dense(out_dim, activation=tf.nn.softmax)
+        self.out_layer = tf.layers.Dense(out_dim)
 
         # optimizer
         self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
