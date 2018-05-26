@@ -1,34 +1,46 @@
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
-
+import os
 
 class VAE(tf.keras.Model):
+    """ Variational Autoencoder model for mnist dataset.
+    Args:
+        input_dim: dimension of input. (28 * 28) for mnist(height * width)
+        z_dim : dimension of z, which is compressed feature vector of input
+        learning_rate: for optimizer
+        checkpoint_directory: checkpoint saving directory
+        device_name: main device used for learning
+    """
     def __init__(self, input_dim = 28*28,
-                 out_dim = 10,
+                 z_dim = 10,
                  learning_rate=0.001,
                  checkpoint_directory="checkpoints/",
                  device_name="cpu:0"):
         super(VAE, self).__init__()
 
         self.input_dim = input_dim
-        self.out_dim = out_dim
+        self.z_dim = z_dim
         self.learning_rate = learning_rate
         self.checkpoint_directory = checkpoint_directory
+        if not os.path.exists(self.checkpoint_directory):
+            os.makedirs(self.checkpoint_directory)
         self.device_name = device_name
 
-        # Encoder
-        self.encode_dense1 = tf.layers.Dense(512, activation=tf.nn.relu)
-        self.encode_dense2 = tf.layers.Dense(256, activation=tf.nn.relu)
-        self.encode_mu = tf.layers.Dense(128)
-        self.encode_logsigma = tf.layers.Dense(128)
+        # Encoder layers
+        self.encode_dense1 = tf.layers.Dense(512, activation=tf.nn.elu)
+        self.encode_dense2 = tf.layers.Dense(384, activation=tf.nn.elu)
+        self.encode_dense3 = tf.layers.Dense(256, activation=tf.nn.elu)
+        self.encode_mu = tf.layers.Dense(z_dim)
+        self.encode_logsigma = tf.layers.Dense(z_dim)
 
-        # Decoder
-        self.decode_dense1 = tf.layers.Dense(512, activation=tf.nn.relu)
-        self.decode_dense2 = tf.layers.Dense(256, activation=tf.nn.relu)
-        self.decode_out_layer = tf.layers.Dense(self.input_dim, activation=tf.nn.sigmoid)
+        # Decoder layers
+        self.decode_dense1 = tf.layers.Dense(256, activation=tf.nn.elu)
+        self.decode_dense2 = tf.layers.Dense(384, activation=tf.nn.elu)
+        self.decode_dense3 = tf.layers.Dense(512, activation=tf.nn.elu)
+        self.decode_out_layer = tf.layers.Dense(self.input_dim)
 
         # optimizer
-        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate = self.learning_rate)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate = self.learning_rate)
 
         self.global_step = 0
         self.epoch_reconstruction_loss = 0.
@@ -36,45 +48,84 @@ class VAE(tf.keras.Model):
         self.epoch_loss = 0.
 
     def encoding(self, X):
-        x = self.encode_dense1(X)
-        x = self.encode_dense2(x)
-        mu = self.encode_mu(x)
-        logsigma = self.encode_logsigma(x)
+        """encoding input data to normal distribution
+        Args:
+            X : input tensor
+        Returns:
+            mu : mean of distribution
+            logsigma : log value of variation of distribution
+        """
+        z = self.encode_dense1(X)
+        z = self.encode_dense2(z)
+        z = self.encode_dense3(z)
+        mu = self.encode_mu(z)
+        logsigma = self.encode_logsigma(z)
 
         return mu, logsigma
 
     def sampling_z(self, z_mu, z_logsigma):
-        epsilon = tf.random_normal(shape=tf.shape(z_mu))
+        """sampling z using mu and logsigma, using reparameterization trick
+        Args:
+            z_mu : mean of distribution
+            z_logsigma : log value of variation of distribution
+        Return:
+            z value
+        """
+        epsilon = tf.random_normal(shape=tf.shape(z_mu), dtype=tf.float32)
         return z_mu + tf.exp(z_logsigma*0.5) * epsilon
 
     def decoding(self, Z):
-        z = self.decode_dense1(Z)
-        z = self.decode_dense2(z)
-        z = self.decode_out_layer(z)
+        """image generation using z value
+        Args:
+            Z : z value, which is compressed feature part of the data
+        Returns:
+            x_decode : generated image
+            sigmoid(x_decode) : generated image + sigmoid activation
+        """
+        x_decode = self.decode_dense1(Z)
+        x_decode = self.decode_dense2(x_decode)
+        x_decode = self.decode_dense3(x_decode)
+        x_decode = self.decode_out_layer(x_decode)
 
-        return z
+        return x_decode, tf.nn.sigmoid(x_decode)
 
     def loss(self, X):
+        """calculate loss of VAE model
+        Args:
+            X : original image batch
+        """
         mu, logsigma = self.encoding(X)
         Z = self.sampling_z(mu, logsigma)
-        X_decode = self.decoding(Z)
+        X_decode, _ = self.decoding(Z)
 
-        reconstruction_loss =  tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=X, logits=X_decode))
-        KL_divergence_loss = tf.reduce_sum((1/2) * (tf.exp(logsigma) + tf.square(mu) - logsigma - 1), axis=-1)
 
-        self.epoch_reconstruction_loss += reconstruction_loss
-        self.epoch_KL_loss += KL_divergence_loss
+        # what sigmoid_corss_entropy do
+        # 1. cross entropy of [sigmoid(logits) & labels]
+        # 2. mean of dimensions(input_dim)
+        # 3. mean of batches
+        # we only need 1 & 3 so revert 2 by multiplying input_dim
+        reconstruction_loss = self.input_dim * tf.losses.sigmoid_cross_entropy(logits=X_decode, multi_class_labels=X)
 
-        total_loss = reconstruction_loss + KL_divergence_loss
+        kl_div = - 0.5 * tf.reduce_sum(1. + logsigma - tf.square(mu) - tf.exp(logsigma), axis=1)
+
+
+        total_loss = tf.reduce_mean(reconstruction_loss + kl_div)
 
         self.epoch_loss += total_loss
+
+        self.epoch_reconstruction_loss += tf.reduce_mean(reconstruction_loss)
+        self.epoch_KL_loss += tf.reduce_mean(kl_div)
+
         return total_loss
 
     def grad(self, X):
+        """calculate gradient of the batch
+        Args:
+            X : input tensor
+        """
         with tfe.GradientTape() as tape:
             loss_val = self.loss(X)
         return tape.gradient(loss_val, self.variables)
-
 
     def fit(self, train_data, epochs=1, verbose=1, batch_size=32, saving=False):
         """train the network
@@ -127,6 +178,6 @@ class VAE(tf.keras.Model):
             self.global_step = int(tf.train.latest_checkpoint(self.checkpoint_directory).split('/')[-1][1:])
         else:
             saver.restore(self.checkpoint_directory + "-" + str(global_step))
-            self.global_step = global_step
+            self.global_step = int(global_step)
 
         print("load %s" % self.global_step)
