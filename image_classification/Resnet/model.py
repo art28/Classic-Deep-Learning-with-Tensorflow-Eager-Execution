@@ -9,7 +9,7 @@ class Resnet(tf.keras.Model):
     """ Resnet model for CIFAR-10 dataset.
     Args:
         input_dim: dimension of input. (32, 32, 3) for CIFAR-10.(height - width - channel)
-        out_dijm: dimension of output. 10 class for CIFAR-10
+        out_dim: dimension of output. 10 class for CIFAR-10
         learning_rate: for optimizer
         checkpoint_directory: checkpoint saving directory
         device_name: main device used for learning
