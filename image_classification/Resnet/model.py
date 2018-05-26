@@ -1,7 +1,6 @@
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
-import numpy as np
-import time
+import os
 from blocks import IdentitiyBlock_3, ConvolutionBlock_3
 
 
@@ -26,6 +25,8 @@ class Resnet(tf.keras.Model):
         self.out_dim = out_dim
         self.learning_rate = learning_rate
         self.checkpoint_directory = checkpoint_directory
+        if not os.path.exists(self.checkpoint_directory):
+            os.makedirs(self.checkpoint_directory)
         self.device_name = device_name
 
         # layer declaration

@@ -1,8 +1,6 @@
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
-import numpy as np
-import time
-
+import os
 
 def lrn(x, radius=2, alpha=1e-04, beta=0.75, bias=1.0):
     """Create a local response normalization layer.
@@ -34,6 +32,8 @@ class Alexnet(tf.keras.Model):
         self.out_dim = out_dim
         self.learning_rate = learning_rate
         self.checkpoint_directory = checkpoint_directory
+        if not os.path.exists(self.checkpoint_directory):
+            os.makedirs(self.checkpoint_directory)
         self.device_name = device_name
 
         # layer declaration
