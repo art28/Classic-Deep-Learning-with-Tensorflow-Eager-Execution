@@ -57,7 +57,7 @@ class Resnet(tf.keras.Model):
 
         self.flatten = tf.layers.Flatten()
 
-        self.out_layer = tf.layers.Dense(out_dim, activation=tf.nn.softmax)
+        self.out_layer = tf.layers.Dense(out_dim)
 
         # optimizer
         self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)

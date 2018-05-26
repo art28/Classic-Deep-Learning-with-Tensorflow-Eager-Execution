@@ -60,7 +60,7 @@ class GoogLEnet(tf.keras.Model):
         self.flatten = tf.layers.Flatten()
         self.dropout = tf.layers.Dropout(0.4)
 
-        self.out_layer = tf.layers.Dense(self.out_dim, activation=tf.nn.softmax)
+        self.out_layer = tf.layers.Dense(self.out_dim)
 
         # optimizer
         self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate)

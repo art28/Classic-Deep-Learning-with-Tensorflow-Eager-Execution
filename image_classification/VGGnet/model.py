@@ -63,7 +63,7 @@ class VGGnet(tf.keras.Model):
         self.dense2 = tf.layers.Dense(128, activation=tf.nn.relu)
         self.dropout2 = tf.layers.Dropout(0.5)
 
-        self.out_layer = tf.layers.Dense(self.out_dim, activation=tf.nn.softmax)
+        self.out_layer = tf.layers.Dense(self.out_dim)
 
         # optimizer
         self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate)
