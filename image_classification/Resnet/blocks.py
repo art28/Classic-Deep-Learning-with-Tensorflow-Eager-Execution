@@ -29,7 +29,7 @@ class IdentitiyBlock_3(tf.keras.Model):
         x = self.bn1(x, training=training)
 
         x = self.conv2(x)
-        x = self.bn1(x, training=training)
+        x = self.bn2(x, training=training)
 
         x = self.conv3(x)
         x = self.bn3(x, training=training)
@@ -69,7 +69,7 @@ class ConvolutionBlock_3(tf.keras.Model):
         x = self.bn1(x, training=training)
 
         x = self.conv2(x)
-        x = self.bn1(x, training=training)
+        x = self.bn2(x, training=training)
 
         x = self.conv3(x)
         x = self.bn3(x, training=training)
