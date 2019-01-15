@@ -1,8 +1,12 @@
+# THIS REPOSITORY IS PERMANENTLY MOVED TO [art28/tensorflow-eager-papers](https://github.com/art28/tensorflow-eager-papers)
+
+-----------------------------------------------------------------
+
 # Classic-Deep-Learning-with-Tensorflow-Eager-Execution
 Classical deep learning paper implementation using tensorflow's eager execution
 
 ## Library version
-- Tensorflow with version 1.8.0
+- Tensorflow with version 1.12.0
 - CUDA 9.0 & CUDNN 7.1
 
 ## Inspired by...
@@ -14,6 +18,6 @@ Classical deep learning paper implementation using tensorflow's eager execution
  - [x] Image Classification
  - [ ] Speech Recognition
  - [ ] Reinforcement Learning
- - [ ] Natural Language Processing
+ - [x] Natural Language Processing
  - [x] Generative Models
  - [ ] Neural Turing Machine
